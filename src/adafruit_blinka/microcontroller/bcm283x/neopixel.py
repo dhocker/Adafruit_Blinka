@@ -63,6 +63,8 @@ def neopixel_write(gpio, buf):
                 raise RuntimeError("NeoPixel support requires running with sudo, please try again!")
             message = ws.ws2811_get_return_t_str(resp)
             raise RuntimeError('ws2811_init failed with code {0} ({1})'.format(resp, message))
+        # This is supposed to clean up memory but it appears to run AFTER
+        # the memory leak error message appears
         atexit.register(neopixel_cleanup)
 
     channel = ws.ws2811_channel_get(_led_strip, LED_CHANNEL)
