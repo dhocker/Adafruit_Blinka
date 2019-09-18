@@ -1,3 +1,4 @@
+import atexit
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)    # Use BCM pins D4 = GPIO #4
 GPIO.setwarnings(False)   # shh!
@@ -57,6 +58,10 @@ class Pin:
                 raise RuntimeError("Invalid value for pin")
         else:
             return GPIO.input(self.id)
+
+    @atexit.register
+    def cleanup():
+        GPIO.cleanup()
 
 # Pi 1B rev1 only?
 D0 = Pin(0)
