@@ -1,10 +1,15 @@
+"""Broadcom BCM283x pin names"""
+
 import atexit
 import RPi.GPIO as GPIO
-GPIO.setmode(GPIO.BCM)    # Use BCM pins D4 = GPIO #4
-GPIO.setwarnings(False)   # shh!
 
-# Pins dont exist in CPython so...lets make our own!
+GPIO.setmode(GPIO.BCM)  # Use BCM pins D4 = GPIO #4
+GPIO.setwarnings(False)  # shh!
+
+
 class Pin:
+    """Pins dont exist in CPython so...lets make our own!"""
+
     IN = 0
     OUT = 1
     LOW = 0
@@ -12,11 +17,11 @@ class Pin:
     PULL_NONE = 0
     PULL_UP = 1
     PULL_DOWN = 2
-    
+
     id = None
     _value = LOW
     _mode = IN
-    
+
     def __init__(self, bcm_number):
         self.id = bcm_number
 
@@ -27,7 +32,8 @@ class Pin:
         return self.id == other
 
     def init(self, mode=IN, pull=None):
-        if mode != None:
+        """Initialize the Pin"""
+        if mode is not None:
             if mode == self.IN:
                 self._mode = self.IN
                 GPIO.setup(self.id, GPIO.IN)
@@ -36,7 +42,7 @@ class Pin:
                 GPIO.setup(self.id, GPIO.OUT)
             else:
                 raise RuntimeError("Invalid mode for pin: %s" % self.id)
-        if pull != None:
+        if pull is not None:
             if self._mode != self.IN:
                 raise RuntimeError("Cannot set pull resistor on output")
             if pull == self.PULL_UP:
@@ -44,10 +50,11 @@ class Pin:
             elif pull == self.PULL_DOWN:
                 GPIO.setup(self.id, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
             else:
-                raise RuntimeError("Invalid pull for pin: %s" % self.id)       
+                raise RuntimeError("Invalid pull for pin: %s" % self.id)
 
     def value(self, val=None):
-        if val != None:
+        """Set or return the Pin Value"""
+        if val is not None:
             if val == self.LOW:
                 self._value = val
                 GPIO.output(self.id, val)
@@ -56,8 +63,9 @@ class Pin:
                 GPIO.output(self.id, val)
             else:
                 raise RuntimeError("Invalid value for pin")
-        else:
-            return GPIO.input(self.id)
+            return None
+        return GPIO.input(self.id)
+
 
     @atexit.register
     def cleanup():
@@ -85,7 +93,7 @@ MISO = Pin(9)
 D10 = Pin(10)
 MOSI = Pin(10)
 D11 = Pin(11)
-SCLK = Pin(11) # Raspberry Pi naming
+SCLK = Pin(11)  # Raspberry Pi naming
 SCK = Pin(11)  # CircuitPython naming
 
 D12 = Pin(12)
@@ -136,14 +144,23 @@ D44 = Pin(44)
 D45 = Pin(45)
 
 # ordered as spiId, sckId, mosiId, misoId
-spiPorts = ((0, SCLK, MOSI, MISO), (1, SCLK_1, MOSI_1, MISO_1), (2, SCLK_2, MOSI_2, MISO_2))
+spiPorts = (
+    (0, SCLK, MOSI, MISO),
+    (1, SCLK_1, MOSI_1, MISO_1),
+    (2, SCLK_2, MOSI_2, MISO_2),
+    (3, D3, D2, D1),  # SPI3 on Pi4/CM4
+    (4, D7, D6, D5),  # SPI4 on Pi4/CM4
+    (5, D15, D14, D13),  # SPI5 on Pi4/CM4
+)
 
 # ordered as uartId, txId, rxId
-uartPorts = (
-    (1, TXD, RXD),
-)
+uartPorts = ((1, TXD, RXD),)
 
+# These are the known hardware I2C ports / pins.
+# For software I2C ports created with the i2c-gpio overlay, see:
+#     https://github.com/adafruit/Adafruit_Python_Extended_Bus
 i2cPorts = (
-    (1, SCL, SDA), (0, D1, D0),   # both pi 1 and pi 2 i2c ports!
+    (1, SCL, SDA),
+    (0, D1, D0),  # both pi 1 and pi 2 i2c ports!
+    (10, D45, D44),  # internal i2c bus for the CM4
 )
-
