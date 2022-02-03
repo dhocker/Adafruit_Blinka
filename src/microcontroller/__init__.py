@@ -1,4 +1,9 @@
-"""Microcontroller pins"""
+"""
+`microcontroller` - Pin references and cpu functionality
+========================================================
+
+* Author(s): Melissa LeBlanc-Williams
+"""
 
 import sys
 import time
@@ -14,7 +19,12 @@ def delay_us(delay):
 
 
 class Pin(Enum):
-    """Reference Pin object"""
+    """
+    Identifies an IO pin on the microcontroller.
+
+    They are fixed by the hardware so they cannot be constructed on demand. Instead, use board or
+    microcontroller.pin to reference the desired pin.
+    """
 
     def __init__(self, pin_id):
         """Identifier for pin, referencing platform-specific pin id"""
@@ -47,7 +57,14 @@ elif chip_id == ap_chip.STM32F405:
 elif chip_id == ap_chip.RP2040:
     from adafruit_blinka.microcontroller.rp2040 import *
 elif chip_id == ap_chip.BCM2XXX:
-    from adafruit_blinka.microcontroller.bcm283x import *
+    if board_id in [
+        "RASPBERRY_PI_4B",
+        "RASPBERRY_PI_400",
+        "RASPBERRY_PI_CM4",
+    ]:
+        from adafruit_blinka.microcontroller.bcm2711.pin import *
+    else:
+        from adafruit_blinka.microcontroller.bcm283x.pin import *
 elif chip_id == ap_chip.DRA74X:
     from adafruit_blinka.microcontroller.dra74x.pin import *
 elif chip_id == ap_chip.AM33XX:
@@ -90,6 +107,8 @@ elif chip_id == ap_chip.RK3399:
     from adafruit_blinka.microcontroller.rockchip.rk3399.pin import *
 elif chip_id == ap_chip.RK3328:
     from adafruit_blinka.microcontroller.rockchip.rk3328.pin import *
+elif chip_id == ap_chip.H3:
+    from adafruit_blinka.microcontroller.allwinner.h3.pin import *
 elif chip_id == ap_chip.H5:
     from adafruit_blinka.microcontroller.allwinner.h5.pin import *
 elif chip_id == ap_chip.IMX8MX:
@@ -102,6 +121,8 @@ elif chip_id == ap_chip.BINHO:
     from adafruit_blinka.microcontroller.nova import *
 elif chip_id == ap_chip.LPC4330:
     from adafruit_blinka.microcontroller.nxp_lpc4330 import *
+elif chip_id == ap_chip.MCP2221:
+    from adafruit_blinka.microcontroller.mcp2221.pin import *
 elif chip_id == ap_chip.MIPS24KC:
     from adafruit_blinka.microcontroller.atheros.ar9331 import *
 elif chip_id == ap_chip.MIPS24KEC:
@@ -116,6 +137,10 @@ elif chip_id == ap_chip.STM32MP157:
     from adafruit_blinka.microcontroller.stm32.stm32mp157.pin import *
 elif chip_id == ap_chip.MT8167:
     from adafruit_blinka.microcontroller.mt8167.pin import *
+elif chip_id == ap_chip.RP2040_U2IF:
+    from adafruit_blinka.microcontroller.rp2040_u2if.pin import *
+elif chip_id == ap_chip.GENERIC_X86:
+    print("WARNING: GENERIC_X86 is not fully supported. Some features may not work.")
 elif "sphinx" in sys.modules:
     pass
 else:

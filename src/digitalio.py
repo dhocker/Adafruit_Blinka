@@ -77,6 +77,8 @@ elif detector.chip.STM32MP157:
     from adafruit_blinka.microcontroller.stm32.stm32mp157.pin import Pin
 elif detector.chip.MT8167:
     from adafruit_blinka.microcontroller.mt8167.pin import Pin
+elif detector.chip.H3:
+    from adafruit_blinka.microcontroller.allwinner.h3.pin import Pin
 elif detector.chip.H5:
     from adafruit_blinka.microcontroller.allwinner.h5.pin import Pin
 elif detector.chip.H6:
@@ -89,6 +91,7 @@ elif (
     detector.board.feather_u2if
     or detector.board.qtpy_u2if
     or detector.board.itsybitsy_u2if
+    or detector.board.macropad_u2if
     or detector.board.qt2040_trinkey_u2if
 ):
     from adafruit_blinka.microcontroller.rp2040_u2if.pin import Pin
@@ -176,7 +179,7 @@ class DigitalInOut(ContextManaged):
 
     @property
     def value(self):
-        """Get or Set the Digital Pin Value"""
+        """The Digital Pin Value"""
         return self._pin.value() == 1
 
     @value.setter
@@ -188,7 +191,7 @@ class DigitalInOut(ContextManaged):
 
     @property
     def pull(self):
-        """Get or Set the Digital Pin Direction"""
+        """The pin pull direction"""
         if self.direction is Direction.INPUT:
             return self.__pull
         raise AttributeError("Not an input")
@@ -215,7 +218,7 @@ class DigitalInOut(ContextManaged):
 
     @property
     def drive_mode(self):
-        """Get or Set the Digital Pin Drive Mode"""
+        """The Digital Pin Drive Mode"""
         if self.direction is Direction.OUTPUT:
             return self.__drive_mode  #
         raise AttributeError("Not an output")
